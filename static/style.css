@@ -1,0 +1,351 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    padding: 0;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 90vh;
+    margin: 20px;
+}
+
+/* ===== LEFT PANEL ===== */
+.left-panel {
+    width: 40%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.left-panel h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.left-panel p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.form-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: all 0.3s;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group input[type="date"] {
+    color-scheme: dark;
+}
+
+.btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-top: auto;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ===== RIGHT PANEL ===== */
+.right-panel {
+    width: 60%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+}
+
+.right-panel h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.stats {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.tasks-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.tasks-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tasks-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tasks-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.tasks-container::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.task-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.task-item:hover {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.task-item.done .task-title {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.task-item.done .task-due-date {
+    color: #999;
+}
+
+.task-item.overdue {
+    border-left: 4px solid #ff6b6b;
+    background: #fff8f8;
+}
+
+.task-checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.task-content {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.task-title {
+    font-weight: 600;
+    color: #333;
+    word-break: break-word;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.task-description {
+    font-size: 13px;
+    color: #666;
+    word-break: break-word;
+    margin-bottom: 6px;
+}
+
+.task-due-date {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.task-due-date.coming-soon {
+    color: #f59e0b;
+}
+
+.task-due-date.overdue-label {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.task-actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+}
+
+.btn-delete {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    background: #ee5a52;
+    transform: scale(1.05);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+    }
+
+    .left-panel {
+        padding: 30px;
+        min-height: auto;
+    }
+
+    .right-panel {
+        min-height: 400px;
+    }
+
+    .tasks-container {
+        max-height: 400px;
+    }
+
+    .task-item {
+        flex-wrap: wrap;
+    }
+
+    .task-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        border-radius: 0;
+        margin: 0;
+        height: 100vh;
+    }
+
+    .left-panel,
+    .right-panel {
+        padding: 20px;
+    }
+
+    .left-panel h1 {
+        font-size: 24px;
+    }
+
+    .right-panel h2 {
+        font-size: 20px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 12px 20px;
+    }
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO Application</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='50' font-size='50'>🚴</text></svg>">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- LEFT PANEL: FORM -->
+        <div class="left-panel">
+            <h1>📝 TODO App</h1>
+            <p>Créez une nouvelle tâche</p>
+
+            <form method="post" action="/tasks" class="form-section">
+                <div class="form-group">
+                    <label for="title">Titre</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Qu'est-ce à faire?"
+                        required
+                        autocomplete="off"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Ajouter des détails..."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="due_date">Date d'échéance</label>
+                    <input
+                        type="date"
+                        id="due_date"
+                        name="due_date"
+                    />
+                </div>
+
+                <button type="submit" class="btn">Ajouter une tâche</button>
+            </form>
+        </div>
+
+        <!-- RIGHT PANEL: TASKS LIST -->
+        <div class="right-panel">
+            <h2>Mes tâches</h2>
+            <div class="stats">
+                {% if total_count > 0 %}
+                    <strong>{{ completed_count }}/{{ total_count }}</strong> tâches complétées
+                {% else %}
+                    Aucune tâche pour le moment
+                {% endif %}
+            </div>
+
+            <div class="tasks-container">
+                {% if tasks %}
+                    <ul class="task-list">
+                        {% for task in tasks %}
+                            {% set is_overdue = task.due_date and task.due_date < today %}
+                            <li class="task-item {% if task.done %}done{% endif %} {% if is_overdue and not task.done %}overdue{% endif %}">
+                                <form method="post" action="/tasks/{{ task.id }}/toggle" style="margin: 0; display: flex; align-items: center;">
+                                    <input
+                                        type="checkbox"
+                                        class="task-checkbox"
+                                        {% if task.done %}checked{% endif %}
+                                        onchange="this.form.submit()"
+                                    />
+                                </form>
+
+                                <div class="task-content">
+                                    <div class="task-title">{{ task.title }}</div>
+                                    {% if task.description %}
+                                        <div class="task-description">{{ task.description }}</div>
+                                    {% endif %}
+                                    {% if task.due_date %}
+                                        <div class="task-due-date {% if is_overdue and not task.done %}overdue-label{% elif task.due_date <= coming_soon and not task.done %}coming-soon{% endif %}">
+                                            📅
+                                            {% if is_overdue and not task.done %}
+                                                Échéance dépassée
+                                            {% else %}
+                                                {{ task.due_date }}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="task-actions">
+                                    <form method="post" action="/tasks/{{ task.id }}/delete" style="margin: 0;" onsubmit="return confirm('Supprimer cette tâche?');">
+                                        <button type="submit" class="btn-delete">Supprimer</button>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✨</div>
+                        <p>Aucune tâche. Créez-en une pour commencer!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
