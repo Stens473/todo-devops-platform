@@ -22,15 +22,57 @@ todo-devops-platform/
 ├── main.py                  # FastAPI application with SQLAlchemy ORM
 ├── requirements.txt         # Python dependencies
 ├── Dockerfile              # Docker container configuration
-├── docker-compose.yml      # PostgreSQL + FastAPI orchestration
+├── docker-compose.yml      # PostgreSQL + FastAPI orchestration (uses .env)
 ├── init.sql               # Database initialization script
-├── .dockerignore          # Docker build exclusions
-├── .gitignore             # Git exclusions
+├── .env                   # Environment variables (DO NOT COMMIT)
+├── .env.example          # Example environment template (for documentation)
+├── .gitlab-ci.yml        # GitLab CI/CD pipeline configuration
+├── .dockerignore         # Docker build exclusions
+├── .gitignore            # Git exclusions
 ├── static/
-│   └── style.css          # External CSS stylesheet
+│   └── style.css         # External CSS stylesheet
 └── templates/
-    └── index.html         # Jinja2 HTML template
+    └── index.html        # Jinja2 HTML template
 ```
+
+## Environment Configuration
+
+### Setup
+
+1. **Copy the example environment file:**
+
+```bash
+cp .env.example .env
+```
+
+2. **Edit `.env` with your settings:**
+
+```bash
+# Application
+PORT=8000
+HOST=0.0.0.0
+
+# PostgreSQL
+POSTGRES_USER=todo_user
+POSTGRES_PASSWORD=your_secure_password_here
+POSTGRES_DB=todo_db
+DATABASE_URL=postgresql://todo_user:your_secure_password_here@postgres:5432/todo_db
+```
+
+⚠️ **IMPORTANT**: Never commit the `.env` file! It's included in `.gitignore` to protect sensitive data.
+
+### Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Application server port | 8000 |
+| `HOST` | Server host binding | 0.0.0.0 |
+| `POSTGRES_USER` | Database username | todo_user |
+| `POSTGRES_PASSWORD` | Database password | *(required)* |
+| `POSTGRES_DB` | Database name | todo_db |
+| `DATABASE_URL` | Full PostgreSQL connection string | *(auto-generated)* |
+
+---
 
 ## Technology Stack
 
@@ -117,6 +159,49 @@ CREATE TABLE tasks (
 );
 ```
 
+## CI/CD Pipeline (GitLab)
+
+The project includes an automated GitLab CI/CD pipeline (`.gitlab-ci.yml`) with the following stages:
+
+### Build Stage
+- Builds Docker image
+- Pushes to GitLab Container Registry
+- Triggers on: `main` branch and tags
+- Tags: `$CI_COMMIT_SHORT_SHA` and `latest`
+
+### Test Stage
+- **Docker Compose Test**: Validates docker-compose setup
+- **Linting**: Python code quality checks (flake8, pylint)
+- Triggers on: `main` branch and merge requests
+
+### Deploy Stage
+- Manual trigger for production deployment
+- Provides deployment instructions
+- Triggers on: `main` branch and tags (when manually triggered)
+
+### Setup GitLab CI/CD
+
+1. **Ensure GitLab Runner is configured:**
+   ```bash
+   gitlab-runner register
+   ```
+
+2. **Configure container registry credentials** in GitLab (Settings → CI/CD → Variables)
+
+3. **Pipeline will automatically run** on:
+   - Push to `main` branch
+   - Creation of tags
+   - Merge requests to `main`
+
+### View Pipeline Status
+
+- Navigate to: **CI/CD → Pipelines** in your GitLab project
+- Check logs in each job for details
+
+---
+
+## Database Schema
+
 ## Development
 
 ### Making Changes
@@ -174,6 +259,24 @@ Ensure `static/` directory exists and contains `style.css`
 - Database queries use indexing on `id` and `created_at`
 - Suitable for small to medium workloads
 - For high-volume usage, consider adding caching (Redis) or pagination
+
+## Security
+
+⚠️ **Important Security Considerations:**
+
+1. **Never commit `.env` file** - Contains sensitive database credentials
+2. **Use `.env.example`** as a template for new developers
+3. **In production**:
+   - Use strong, randomly generated passwords for `POSTGRES_PASSWORD`
+   - Use environment secrets in GitLab CI/CD (Settings → CI/CD → Variables)
+   - Never store secrets in code or container images
+   - Use a secrets management solution (HashiCorp Vault, AWS Secrets Manager, etc.)
+4. **Database access**:
+   - Only expose database internally (not to internet)
+   - Use strong network policies and firewalls
+   - Consider adding SSL/TLS for database connections
+
+---
 
 ## Future Enhancements
 
