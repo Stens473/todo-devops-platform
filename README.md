@@ -91,24 +91,59 @@ DATABASE_URL=postgresql://todo_user:your_secure_password_here@postgres:5432/todo
 
 ### Option 1: Docker Compose (Recommended) 🐳
 
+**Development:**
 ```bash
 cd todo-devops-platform
 docker-compose up --build
+```
+
+**Production:**
+```bash
+cd todo-devops-platform
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
 Access the app at: **http://localhost:8000**
 
 To stop:
 ```bash
+# Development
 docker-compose down
+
+# Production
+docker-compose -f docker-compose.prod.yml down
 ```
 
 To stop and remove all data:
 ```bash
+# Development
 docker-compose down -v
+
+# Production
+docker-compose -f docker-compose.prod.yml down -v
 ```
 
-### Option 2: Local Development
+### Development vs Production
+
+**Development** (`docker-compose.yml`):
+- Builds image locally
+- Mounts code as volume (live reload)
+- Uses default PostgreSQL settings
+- Good for local development
+
+**Production** (`docker-compose.prod.yml`):
+- Uses pre-built image from GitLab Registry
+- No volume mounts (immutable container)
+- Optimized PostgreSQL settings (256MB shared buffers)
+- Health checks enabled
+- Auto-restart on failure
+- Proper networking with bridge network
+- Security options enabled
+- Better resource management
+
+---
+
+## Option 2: Local Development
 
 1. **Install dependencies:**
 ```bash
@@ -158,6 +193,61 @@ CREATE TABLE tasks (
     created_at TIMESTAMP NOT NULL
 );
 ```
+
+## Production Deployment
+
+### Prerequisites
+
+- GitLab Runner configured
+- Docker and Docker Compose installed
+- GitLab Container Registry access
+
+### Steps
+
+1. **Pull latest image:**
+   ```bash
+   docker login registry.gitlab.com
+   docker pull registry.gitlab.com/stens473-group/todo-devops-platform:latest
+   ```
+
+2. **Setup environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with production values
+   vim .env
+   ```
+
+3. **Start services:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+4. **Verify deployment:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml ps
+   curl http://localhost:8000
+   ```
+
+5. **View logs:**
+   ```bash
+   docker-compose -f docker-compose.prod.yml logs -f todo-app
+   ```
+
+### Maintenance
+
+**Backup database:**
+```bash
+docker-compose -f docker-compose.prod.yml exec postgres \
+  pg_dump -U todo_user todo_db > backup_$(date +%Y%m%d).sql
+```
+
+**Update to new version:**
+```bash
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+---
 
 ## CI/CD Pipeline (GitLab)
 
